@@ -94,13 +94,13 @@ public class NumberRangeImplementationTest {
     @Test
     void summarize_emptyCollection_returnsBracketString() {
         Collection<Integer> input = summarizer.collect("");
-        assertEquals("[]", summarizer.summarizeCollection(input));
+        assertEquals("", summarizer.summarizeCollection(input));
     }
 
     @Test
     void summarize_singleElement_returnsBracketString() {
         Collection<Integer> input = summarizer.collect("5");
-        assertEquals("[5]", summarizer.summarizeCollection(input));
+        assertEquals("5", summarizer.summarizeCollection(input));
     }
 
     @Test

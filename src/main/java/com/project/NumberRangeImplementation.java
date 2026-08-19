@@ -43,54 +43,44 @@ public class NumberRangeImplementation implements NumberRangeSummarizer
         return numbersList;
     }
 
-    //Produces a comma delimited list of numbers,
-    //Grouping the numbers into a range when they are sequential
     public String summarizeCollection(Collection<Integer> input)
     {
-        //Return input if it contains less than two elements
-        if(input.size() < 2)
+        int inputSize = input.size();
+        if (inputSize == 0) return "";
+
+        List<Integer> numbers = new ArrayList<>(input);
+        if (inputSize == 1) return String.valueOf(numbers.get(0));
+
+        //Use StringBuilder rather than String as more efficient due to mutability
+        StringBuilder result = new StringBuilder();
+
+        //Track the start of the current run and the last number seen
+        int rangeStart = numbers.get(0);
+        int previousNum = rangeStart;
+
+        for (int i = 1; i < inputSize; i++)
         {
-            return input.toString();
-        }
-
-        List<Integer> numbersList = new ArrayList<>(input);
-        List <String> resultList = new ArrayList<>();
-        
-        //Use range variables to use in determining ranges
-        //Use count variable to keep track of current index position in numberslist
-        int rangeStart = numbersList.get(0);
-        int rangeEnd = numbersList.get(0);
-        int count = 0;
-
-        //Loop through list of numbers and determine ranges where sequential
-        for(int number : numbersList)
-        {
-            //A gap greater than 1 means the current number is not consecutive with
-            //the previous one so the range being built has ended
-            if(number - rangeEnd > 1)
+            int current = numbers.get(i);
+            if (current - previousNum > 1)
             {
-                resultList.add(determineRange(rangeStart, rangeEnd));
-                rangeStart = number;
+                appendRange(result, rangeStart, previousNum);
+                rangeStart = current;
             }
-
-            //Detects the last iteration so the final range/single number gets flushed,
-            //since there is no element after it to trigger the end of range check above
-            if(count == input.size()-1)
-            {
-                if(number - rangeEnd > 1)
-                {
-                    resultList.add(String.valueOf(number));
-                }
-                else
-                {
-                    resultList.add(determineRange(rangeStart, number));
-                }
-            }
-            rangeEnd = number;  
-            count++;  
+            previousNum = current;
         }
+        //Flush whatever range/number is still in progress after the loop ends
+        //since there is no next element to trigger the range check above
+        appendRange(result, rangeStart, previousNum);
 
-        return String.join(",", resultList);
+        return result.toString();
+    }
+
+    //Appends a single number or "start-end" range to the result,
+    //prefixing with a comma if it is not the first entry
+    private void appendRange(StringBuilder sb, int start, int end)
+    {
+        if (sb.length() > 0) sb.append(",");
+        sb.append(determineRange(start, end));
     }
 
     //Returns a single number or "start-end" if the range spans more than one value

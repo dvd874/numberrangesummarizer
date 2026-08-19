@@ -12,14 +12,14 @@ Output: 1,3,6-8,12-15,21-24,31
 ## Requirements
 
 - Java Development Kit (JDK) 11 or newer
-- Apache Maven 3.6 or newer
 - Git, if cloning from GitHub
 
-Check that Java and Maven are installed:
+Apache Maven 3.6 or newer is recommended for running the tests, but it is not required for running the application. Maven downloads the JUnit libraries used by the tests automatically.
+
+Check that Java is installed:
 
 ```powershell
 java -version
-mvn -version
 ```
 
 ## Download the project
@@ -48,6 +48,32 @@ mvn clean test
 ```
 
 The tests cover sorting, negative numbers, duplicates, empty input, invalid input, and range summarization.
+
+### Run tests without Maven
+
+Without Maven, you need a JDK and the JUnit Platform Console Standalone jar. From the project root, download the jar and create local build folders:
+
+```powershell
+New-Item -ItemType Directory -Force lib,target/classes,target/test-classes
+Invoke-WebRequest `
+  -Uri "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.4.2/junit-platform-console-standalone-1.4.2.jar" `
+  -OutFile "lib/junit-platform-console-standalone-1.4.2.jar"
+```
+
+Compile the application and tests:
+
+```powershell
+javac -d target/classes src/main/java/com/project/NumberRangeSummarizer.java src/main/java/com/project/NumberRangeImplementation.java
+javac -cp "lib/junit-platform-console-standalone-1.4.2.jar;target/classes" -d target/test-classes src/test/java/com/project/NumberRangeImplementationTest.java
+```
+
+Run the tests:
+
+```powershell
+java -jar lib/junit-platform-console-standalone-1.4.2.jar `
+  --class-path "target/classes;target/test-classes" `
+  --scan-class-path
+```
 
 ## Run the application
 
